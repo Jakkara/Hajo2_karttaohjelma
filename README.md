@@ -7,3 +7,5 @@
 * Karttadatan pyynnön muodostus ja lähetys (getMap)
 * Vastauksen vastaanotto ja käsittely
 * Kuvan esittäminen 
+* // * 
+* Käyttöliittymän toteutus
