@@ -78,7 +78,7 @@
       private class ButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent e) {
           if(e.getSource() == refreshB) {
-            //try { updateImage(); } catch(Exception ex) { ex.printStackTrace(); }
+            try { updateImage(); } catch(Exception ex) { ex.printStackTrace(); }
           }
           if(e.getSource() == leftB) {
             // TODO:
