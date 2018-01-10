@@ -110,22 +110,49 @@ public class MapDialog extends JFrame {
             }
             if (e.getSource() == leftB) {
                 // TODO:
-
+                bbox[0] -= 20 / zoomFactor;
+                bbox[2] -= 20 /  zoomFactor;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // VASEMMALLE SIIRTYMINEN KARTALLA
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == rightB) {
                 // TODO:
+                bbox[0] -= 20 / zoomFactor;
+                bbox[2] -= 20 /  zoomFactor;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // OIKEALLE SIIRTYMINEN KARTALLA
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == upB) {
                 // TODO:
+                bbox[1] += 20 / zoomFactor;
+                bbox[3] += 20 /  zoomFactor;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // YLÖSPÄIN SIIRTYMINEN KARTALLA
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == downB) {
                 // TODO:
+                bbox[1] -= 20 / zoomFactor;
+                bbox[3] -= 20 /  zoomFactor;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // ALASPÄIN SIIRTYMINEN KARTALLA
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
@@ -159,15 +186,15 @@ public class MapDialog extends JFrame {
     // Tarkastetaan mitkä karttakerrokset on valittu,
     // tehdään uudesta karttakuvasta pyyntö palvelimelle ja päivitetään kuva
     public void updateImage() throws Exception {
+        //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
-
+        //Lisätään rajaavat koordinaatit
         for (int i = 0; i < bbox.length; i++) {
             s += bbox[i] + ",";
-
         }
-        if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
-
-        s += "&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=";
+        if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku perästä
+        //lisätään aina vakiona olevat määrittelyt
+        s += "&SRS=EPSG:4326&WIDTH=1389&HEIGHT=700&LAYERS=";
         // Tutkitaan, mitkä valintalaatikot on valittu, ja
         // kerätään s:ään pilkulla erotettu lista valittujen kerrosten
         // nimistä (käytetään haettaessa uutta kuvaa)
@@ -177,23 +204,23 @@ public class MapDialog extends JFrame {
                 if (((LayerCheckBox) com).isSelected()) s = s + com.getName() + ",";
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
+        //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        System.out.println(s);
+        imageLabel.setIcon(new ImageIcon(new URL(s)));
 
         // TODO:
+        //imageLabel.setIcon(getImage(s));
         // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
-        // imageLabel.setIcon(new ImageIcon(url));
     }
 
     private static int[] parseBboxFromUrl(String url) {
-        String parsed = url.substring(url.indexOf("BBOX=")+5);
-        parsed = parsed.substring(0,parsed.indexOf('&'));
-        System.out.println(parsed);
-        String[] coordinates = parsed.split(",");
+        String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkupään
+        parsed = parsed.substring(0, parsed.indexOf('&')); //leikkaa koordinaattien jälkeisen osan
+        String[] coordinates = parsed.split(",");//erottelee koordinaatit toisistaan
         int[] results = new int[coordinates.length];
+        //lisätään koordinaatit numeroarvoina
         for (int i = 0; i < coordinates.length; i++) {
-            String numberAsString = coordinates[i];
-            results[i] = Integer.parseInt(numberAsString);
+            results[i] = Integer.parseInt(coordinates[i]);
         }
         return results;
     }
