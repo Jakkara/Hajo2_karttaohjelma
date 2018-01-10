@@ -12,9 +12,9 @@ import java.util.Arrays;
 
 public class MapDialog extends JFrame {
 
-    int[] bbox = new int[4];
-    String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-180,-90,180,90&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=bluemarble,cities&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1389&HEIGHT=700&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
     double zoomFactor = 1.0;
+    int[] bbox = parseBboxFromUrl(currentUrl);
 
     // Käyttöliittymän komponentit
 
@@ -93,6 +93,8 @@ public class MapDialog extends JFrame {
 
     public static void main(String[] args) throws Exception {
         new MapDialog();
+        parseBboxFromUrl(currentUrl);
+
     }
 
     // Kontrollinappien kuuntelija
@@ -182,7 +184,19 @@ public class MapDialog extends JFrame {
         // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
         // imageLabel.setIcon(new ImageIcon(url));
     }
-    //private void movementHandler(int )
+
+    private static int[] parseBboxFromUrl(String url) {
+        String parsed = url.substring(url.indexOf("BBOX=")+5);
+        parsed = parsed.substring(0,parsed.indexOf('&'));
+        System.out.println(parsed);
+        String[] coordinates = parsed.split(",");
+        int[] results = new int[coordinates.length];
+        for (int i = 0; i < coordinates.length; i++) {
+            String numberAsString = coordinates[i];
+            results[i] = Integer.parseInt(numberAsString);
+        }
+        return results;
+    }
 
 
 } // MapDialog
