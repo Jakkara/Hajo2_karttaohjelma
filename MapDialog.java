@@ -5,15 +5,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
+import java.util.Arrays;
 
 public class MapDialog extends JFrame {
 
-    int[] centerPoint = new int[2];
+    int[] bbox = new int[4];
     String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-180,-90,180,90&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=bluemarble,cities&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    double zoomFactor = 1.0;
 
     // Käyttöliittymän komponentit
 
@@ -156,8 +157,15 @@ public class MapDialog extends JFrame {
     // Tarkastetaan mitkä karttakerrokset on valittu,
     // tehdään uudesta karttakuvasta pyyntö palvelimelle ja päivitetään kuva
     public void updateImage() throws Exception {
-        String s = "";
+        String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
 
+        for (int i = 0; i < bbox.length; i++) {
+            s += bbox[i] + ",";
+
+        }
+        if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
+
+        s += "&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=";
         // Tutkitaan, mitkä valintalaatikot on valittu, ja
         // kerätään s:ään pilkulla erotettu lista valittujen kerrosten
         // nimistä (käytetään haettaessa uutta kuvaa)
@@ -167,7 +175,8 @@ public class MapDialog extends JFrame {
                 if (((LayerCheckBox) com).isSelected()) s = s + com.getName() + ",";
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
-
+        s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+        System.out.println(s);
 
         // TODO:
         // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
