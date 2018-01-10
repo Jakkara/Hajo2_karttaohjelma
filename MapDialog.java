@@ -206,7 +206,7 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        imageLabel.setIcon(new ImageIcon(new URL(s)));
+        imageLabel.setIcon(new ImageIcon(new URL(s))); //VÄLIAIKAINEN, hidas kuin helvetti
 
         // TODO:
         //imageLabel.setIcon(getImage(s));
