@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class DownloadManager {
 
-    public static void download() throws Exception {
+    public static void download() throws Exception { //prompts user for info
         Scanner reader = new Scanner(System.in);
         System.out.println("Input file URL : ");
         String url = reader.nextLine();
@@ -36,6 +36,4 @@ public class DownloadManager {
             download(url, reader.nextLine());
         }
     }
-
-
 }
