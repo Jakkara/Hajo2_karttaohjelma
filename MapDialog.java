@@ -12,6 +12,9 @@ import java.net.*;
 
 public class MapDialog extends JFrame {
 
+    int[] centerPoint = new int[2];
+    String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-180,-90,180,90&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=bluemarble,cities&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+
     // Käyttöliittymän komponentit
 
     private JLabel imageLabel = new JLabel();
@@ -39,9 +42,7 @@ public class MapDialog extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        // ALLA OLEVAN TESTIRIVIN VOI KORVATA JOLLAKIN MUULLA ERI ALOITUSNÄKYMÄN
-        // LATAAVALLA RIVILLÄ
-        imageLabel.setIcon(new ImageIcon(new URL("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-180,-90,180,90&SRS=EPSG:4326&WIDTH=953&HEIGHT=480&LAYERS=bluemarble,cities&STYLES=&FORMAT=image/png&TRANSPARENT=true")));
+        imageLabel.setIcon(new ImageIcon(new URL(currentUrl)));
 
         add(imageLabel, BorderLayout.EAST);
 
@@ -58,12 +59,7 @@ public class MapDialog extends JFrame {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         leftPanel.setMaximumSize(new Dimension(100, 600));
 
-        // TODO:
-        // ALLA OLEVIEN KOLMEN TESTIRIVIN TILALLE SILMUKKA JOKA LISÄÄ KÄYTTÖLIITTYMÄÄN
-        // KAIKKIEN XML-DATASTA HAETTUJEN KERROSTEN VALINTALAATIKOT MALLIN MUKAAN
-        /*leftPanel.add(new LayerCheckBox("bluemarble", "Maapallo", true));
-        leftPanel.add(new LayerCheckBox("cities", "Kaupungit", false));*/
-
+        //Käsittelee checkboxien esityksen
         Document xmlDoc = parser.getDocument("capabilities.xml");
         System.out.println("File found : " + xmlDoc.getDocumentElement().getNodeName());
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
@@ -96,7 +92,6 @@ public class MapDialog extends JFrame {
 
     public static void main(String[] args) throws Exception {
         new MapDialog();
-
     }
 
     // Kontrollinappien kuuntelija
@@ -112,6 +107,7 @@ public class MapDialog extends JFrame {
             }
             if (e.getSource() == leftB) {
                 // TODO:
+
                 // VASEMMALLE SIIRTYMINEN KARTALLA
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
@@ -172,10 +168,12 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
 
+
         // TODO:
         // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
         // imageLabel.setIcon(new ImageIcon(url));
     }
+    //private void movementHandler(int )
 
 
 } // MapDialog

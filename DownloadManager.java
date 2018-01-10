@@ -31,9 +31,9 @@ public class DownloadManager {
             Files.copy(in, path);       //copy from stream to file path
             System.out.println("\n--***--\nDownload complete.\n--***--\n");
         } catch (FileAlreadyExistsException faeE) {
-            System.out.println("A file with that name already exists. Enter a new name : ");
-            Scanner reader = new Scanner(System.in);
-            download(url, reader.nextLine());
+            Files.deleteIfExists(path);
+            System.out.println("A file with that name already exists. Replacing with a new version.");
+            download(url, file);
         }
     }
 }
