@@ -162,6 +162,11 @@ public class MapDialog extends JFrame {
                 bbox[2] -= -10;
                 bbox[1] -= 5;
                 bbox[3] -= 5;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // ZOOM IN -TOIMINTO
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
@@ -171,6 +176,11 @@ public class MapDialog extends JFrame {
                 bbox[2] += -10;
                 bbox[1] += 5;
                 bbox[3] += 5;
+                try {
+                    updateImage();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
                 // ZOOM OUT -TOIMINTO
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
