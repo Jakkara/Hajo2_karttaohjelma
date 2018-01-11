@@ -65,7 +65,6 @@ public class MapDialog extends JFrame {
         System.out.println("File found : " + xmlDoc.getDocumentElement().getNodeName());
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
         NodeList layers = parser.findNodes(rootLayer, "Layer");
-        //System.out.println("Available layers: " + layers.getLength());
         for (int i = 0; i < layers.getLength(); i++) {
             Node current = parser.findNodes(layers.item(i), "Title").item(0); //haetaan layerin otsikko
             String currentTitle = current.getTextContent();
@@ -94,8 +93,6 @@ public class MapDialog extends JFrame {
 
     public static void main(String[] args) throws Exception {
         new MapDialog();
-        parseBboxFromUrl(currentUrl);
-
     }
 
     // Kontrollinappien kuuntelija

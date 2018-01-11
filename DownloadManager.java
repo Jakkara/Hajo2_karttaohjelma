@@ -31,8 +31,8 @@ public class DownloadManager {
             Files.deleteIfExists(path);
             Files.copy(in, path);       //copy from stream to file path
             System.out.println("\n--***--\nDownload complete.\n--***--\n");
-        } catch (FileAlreadyExistsException faeE) {
-            System.out.println("Previous file replaced with a new one.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
