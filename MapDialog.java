@@ -112,7 +112,7 @@ public class MapDialog extends JFrame {
             if (e.getSource() == leftB) {
                 // TODO:
                 bbox[0] -= 20 / zoomFactor;
-                bbox[2] -= 20 /  zoomFactor;
+                bbox[2] -= 20 / zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
@@ -120,40 +120,33 @@ public class MapDialog extends JFrame {
                 }
             }
             if (e.getSource() == rightB) {
-                // TODO:
                 bbox[0] += 20 / zoomFactor;
-                bbox[2] += 20 /  zoomFactor;
+                bbox[2] += 20 / zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // OIKEALLE SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == upB) {
                 // TODO:
                 bbox[1] += 10 / zoomFactor;
-                bbox[3] += 10 /  zoomFactor;
+                bbox[3] += 10 / zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // YLÖSPÄIN SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == downB) {
                 // TODO: tarkista sallittu liikkuminen
                 bbox[1] -= 10 / zoomFactor;
-                bbox[3] -= 10 /  zoomFactor;
+                bbox[3] -= 10 / zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // ALASPÄIN SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == zoomInB) {
                 // TODO: tarkista sallittu liikkuminen
@@ -167,8 +160,6 @@ public class MapDialog extends JFrame {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // ZOOM IN -TOIMINTO
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == zoomOutB) {
                 bbox[0] -= 10;
@@ -181,8 +172,6 @@ public class MapDialog extends JFrame {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // ZOOM OUT -TOIMINTO
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
         }
     }
@@ -203,7 +192,7 @@ public class MapDialog extends JFrame {
 
     // Tarkastetaan mitkä karttakerrokset on valittu,
     // tehdään uudesta karttakuvasta pyyntö palvelimelle ja päivitetään kuva
-    public void updateImage() throws Exception {
+    private void updateImage() throws Exception {
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
         //Lisätään rajaavat koordinaatit
@@ -228,7 +217,6 @@ public class MapDialog extends JFrame {
 
         // TODO:
         //imageLabel.setIcon(getImage(s));
-        // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
     }
 
     private static int[] parseBboxFromUrl(String url) {
