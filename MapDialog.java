@@ -67,10 +67,11 @@ public class MapDialog extends JFrame {
         NodeList layers = parser.findNodes(rootLayer, "Layer");
         //System.out.println("Available layers: " + layers.getLength());
         for (int i = 0; i < layers.getLength(); i++) {
-            Node current = parser.findNodes(layers.item(i), "Title").item(0);
+            Node current = parser.findNodes(layers.item(i), "Title").item(0); //haetaan layerin otsikko
             String currentTitle = current.getTextContent();
-            current = parser.findNodes(layers.item(i), "Name").item(0);
+            current = parser.findNodes(layers.item(i), "Name").item(0); //haetaan layerin nimi XML:ssä
             String currentName = current.getTextContent();
+            //asetetaan checkboxin rasti sillä perusteella, löytyykö se urlista
             leftPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
         }
 
@@ -120,8 +121,8 @@ public class MapDialog extends JFrame {
             }
             if (e.getSource() == rightB) {
                 // TODO:
-                bbox[0] -= 20 / zoomFactor;
-                bbox[2] -= 20 /  zoomFactor;
+                bbox[0] += 20 / zoomFactor;
+                bbox[2] += 20 /  zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
@@ -160,6 +161,7 @@ public class MapDialog extends JFrame {
                 bbox[2] -= 10;
                 bbox[1] += 5;
                 bbox[3] -= 5;
+                zoomFactor += 0.1;
                 try {
                     updateImage();
                 } catch (Exception e1) {
@@ -169,11 +171,11 @@ public class MapDialog extends JFrame {
                 // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == zoomOutB) {
-                // TODO:
                 bbox[0] -= 10;
                 bbox[2] += 10;
                 bbox[1] -= 5;
                 bbox[3] += 5;
+                if (zoomFactor > 0.1) zoomFactor -= 0.1;
                 try {
                     updateImage();
                 } catch (Exception e1) {
