@@ -28,12 +28,11 @@ public class DownloadManager {
         Path path = Paths.get(file); //file path
         URI u = URI.create(url);
         try (InputStream in = u.toURL().openStream()) { //stream from URL
+            Files.deleteIfExists(path);
             Files.copy(in, path);       //copy from stream to file path
             System.out.println("\n--***--\nDownload complete.\n--***--\n");
         } catch (FileAlreadyExistsException faeE) {
-            Files.deleteIfExists(path);
-            System.out.println("A file with that name already exists. Replacing with a new version.");
-            download(url, file);
+            System.out.println("Previous file replaced with a new one.");
         }
     }
 }

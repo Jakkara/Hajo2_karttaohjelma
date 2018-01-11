@@ -71,7 +71,7 @@ public class MapDialog extends JFrame {
             String currentTitle = current.getTextContent();
             current = parser.findNodes(layers.item(i), "Name").item(0);
             String currentName = current.getTextContent();
-            leftPanel.add(new LayerCheckBox(currentName, currentTitle, true));
+            leftPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
         }
 
 
