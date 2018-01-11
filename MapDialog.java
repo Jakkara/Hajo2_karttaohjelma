@@ -1,4 +1,4 @@
-// Kartankatseluohjelman graafinen kÃ¤yttÃ¶liittymÃ¤
+// Kartankatseluohjelman graafinen käyttöliittymä
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -16,12 +16,12 @@ public class MapDialog extends JFrame {
     double zoomFactor = 1.0;
     int[] bbox = parseBboxFromUrl(currentUrl);
 
-    // KÃ¤yttÃ¶liittymÃ¤n komponentit
+    // Käyttöliittymän komponentit
 
     private JLabel imageLabel = new JLabel();
     private JPanel leftPanel = new JPanel();
 
-    private JButton refreshB = new JButton("PÃ¤ivitÃ¤");
+    private JButton refreshB = new JButton("Päivitä");
     private JButton leftB = new JButton("<");
     private JButton rightB = new JButton(">");
     private JButton upB = new JButton("^");
@@ -33,12 +33,12 @@ public class MapDialog extends JFrame {
 
         // Latausmanageri
         DownloadManager downloader = new DownloadManager();
-        // XML-kÃ¤Ã¤ntÃ¤jÃ¤
+        // XML-kääntäjä
         XmlParser parser = new XmlParser();
         // getCapabilities-kysely -> capabilities.xml
         downloader.download("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities", "capabilities.xml");
 
-        // Valmistele ikkuna ja lisÃ¤Ã¤ siihen komponentit
+        // Valmistele ikkuna ja lisää siihen komponentit
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
@@ -60,7 +60,7 @@ public class MapDialog extends JFrame {
         leftPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         leftPanel.setMaximumSize(new Dimension(100, 600));
 
-        //KÃ¤sittelee checkboxien esityksen
+        //Käsittelee checkboxien esityksen
         Document xmlDoc = parser.getDocument("capabilities.xml");
         System.out.println("File found : " + xmlDoc.getDocumentElement().getNodeName());
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
@@ -98,7 +98,7 @@ public class MapDialog extends JFrame {
     }
 
     // Kontrollinappien kuuntelija
-    // KAIKKIEN NAPPIEN YHTEYDESSÃ„ VOINEE HYÃ–DYNTÃ„Ã„ updateImage()-METODIA
+    // KAIKKIEN NAPPIEN YHTEYDESSÄ VOINEE HYÖDYNTÄÄ updateImage()-METODIA
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == refreshB) {
@@ -117,8 +117,6 @@ public class MapDialog extends JFrame {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // VASEMMALLE SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
             }
             if (e.getSource() == rightB) {
                 // TODO:
@@ -130,37 +128,37 @@ public class MapDialog extends JFrame {
                     e1.printStackTrace();
                 }
                 // OIKEALLE SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
+                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == upB) {
                 // TODO:
-                bbox[1] += 20 / zoomFactor;
-                bbox[3] += 20 /  zoomFactor;
+                bbox[1] += 10 / zoomFactor;
+                bbox[3] += 10 /  zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // YLÃ–SPÃ„IN SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
+                // YLÖSPÄIN SIIRTYMINEN KARTALLA
+                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == downB) {
                 // TODO: tarkista sallittu liikkuminen
-                bbox[1] -= 20 / zoomFactor;
-                bbox[3] -= 20 /  zoomFactor;
+                bbox[1] -= 10 / zoomFactor;
+                bbox[3] -= 10 /  zoomFactor;
                 try {
                     updateImage();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-                // ALASPÃ„IN SIIRTYMINEN KARTALLA
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
+                // ALASPÄIN SIIRTYMINEN KARTALLA
+                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == zoomInB) {
                 // TODO: tarkista sallittu liikkuminen
-                bbox[0] -= 10;
-                bbox[2] -= -10;
-                bbox[1] -= 5;
+                bbox[0] += 10;
+                bbox[2] -= 10;
+                bbox[1] += 5;
                 bbox[3] -= 5;
                 try {
                     updateImage();
@@ -168,13 +166,13 @@ public class MapDialog extends JFrame {
                     e1.printStackTrace();
                 }
                 // ZOOM IN -TOIMINTO
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
+                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
             if (e.getSource() == zoomOutB) {
                 // TODO:
-                bbox[0] += 10;
-                bbox[2] += -10;
-                bbox[1] += 5;
+                bbox[0] -= 10;
+                bbox[2] += 10;
+                bbox[1] -= 5;
                 bbox[3] += 5;
                 try {
                     updateImage();
@@ -182,7 +180,7 @@ public class MapDialog extends JFrame {
                     e1.printStackTrace();
                 }
                 // ZOOM OUT -TOIMINTO
-                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÃ„IVITÃ„ KUVA
+                // MUUTA KOORDINAATTEJA, HAE KARTTAKUVA PALVELIMELTA JA PÄIVITÄ KUVA
             }
         }
     }
@@ -201,21 +199,21 @@ public class MapDialog extends JFrame {
         }
     }
 
-    // Tarkastetaan mitkÃ¤ karttakerrokset on valittu,
-    // tehdÃ¤Ã¤n uudesta karttakuvasta pyyntÃ¶ palvelimelle ja pÃ¤ivitetÃ¤Ã¤n kuva
+    // Tarkastetaan mitkä karttakerrokset on valittu,
+    // tehdään uudesta karttakuvasta pyyntö palvelimelle ja päivitetään kuva
     public void updateImage() throws Exception {
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
-        //LisÃ¤tÃ¤Ã¤n rajaavat koordinaatit
+        //Lisätään rajaavat koordinaatit
         for (int i = 0; i < bbox.length; i++) {
             s += bbox[i] + ",";
         }
-        if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku perÃ¤stÃ¤
-        //lisÃ¤tÃ¤Ã¤n aina vakiona olevat mÃ¤Ã¤rittelyt
+        if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku perästä
+        //lisätään aina vakiona olevat määrittelyt
         s += "&SRS=EPSG:4326&WIDTH=1389&HEIGHT=700&LAYERS=";
-        // Tutkitaan, mitkÃ¤ valintalaatikot on valittu, ja
-        // kerÃ¤tÃ¤Ã¤n s:Ã¤Ã¤n pilkulla erotettu lista valittujen kerrosten
-        // nimistÃ¤ (kÃ¤ytetÃ¤Ã¤n haettaessa uutta kuvaa)
+        // Tutkitaan, mitkä valintalaatikot on valittu, ja
+        // kerätään s:ään pilkulla erotettu lista valittujen kerrosten
+        // nimistä (käytetään haettaessa uutta kuvaa)
         Component[] components = leftPanel.getComponents();
         for (Component com : components) {
             if (com instanceof LayerCheckBox)
@@ -224,19 +222,19 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        imageLabel.setIcon(new ImageIcon(new URL(s))); //VÃ„LIAIKAINEN, hidas kuin helvetti
+        imageLabel.setIcon(new ImageIcon(new URL(s))); //VÄLIAIKAINEN, hidas kuin helvetti
 
         // TODO:
         //imageLabel.setIcon(getImage(s));
-        // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÃ„IVITYS ERILLISESSÃ„ SÃ„IKEESSÃ„
+        // getMap-KYSELYN URL-OSOITTEEN MUODOSTAMINEN JA KUVAN PÄIVITYS ERILLISESSÄ SÄIKEESSÄ
     }
 
     private static int[] parseBboxFromUrl(String url) {
-        String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkupÃ¤Ã¤n
-        parsed = parsed.substring(0, parsed.indexOf('&')); //leikkaa koordinaattien jÃ¤lkeisen osan
+        String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkupään
+        parsed = parsed.substring(0, parsed.indexOf('&')); //leikkaa koordinaattien jälkeisen osan
         String[] coordinates = parsed.split(",");//erottelee koordinaatit toisistaan
         int[] results = new int[coordinates.length];
-        //lisÃ¤tÃ¤Ã¤n koordinaatit numeroarvoina
+        //lisätään koordinaatit numeroarvoina
         for (int i = 0; i < coordinates.length; i++) {
             results[i] = Integer.parseInt(coordinates[i]);
         }
