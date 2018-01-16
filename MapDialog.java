@@ -8,11 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class MapDialog extends JFrame {
 
-    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1389&HEIGHT=700&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
     double zoomFactor = 1.0;
     int[] bbox = parseBboxFromUrl(currentUrl);
 
@@ -21,29 +23,27 @@ public class MapDialog extends JFrame {
     private JLabel imageLabel = new JLabel();
     private JPanel leftPanel = new JPanel();
 
-    private JButton refreshB = new JButton("P‰ivit‰");
+    private JButton refreshB = new JButton("Refresh");
     private JButton leftB = new JButton("<");
     private JButton rightB = new JButton(">");
     private JButton upB = new JButton("^");
     private JButton downB = new JButton("v");
     private JButton zoomInB = new JButton("+");
     private JButton zoomOutB = new JButton("-");
+    DownloadManager downloader = new DownloadManager();
 
     public MapDialog() throws Exception {
-
         // Latausmanageri
-        DownloadManager downloader = new DownloadManager();
         // XML-k‰‰nt‰j‰
         XmlParser parser = new XmlParser();
-        // getCapabilities-kysely -> capabilities.xml
-        downloader.download("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities", "capabilities.xml");
-
+        downloader.start();
+        getCapabilities();
         // Valmistele ikkuna ja lis‰‰ siihen komponentit
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        imageLabel.setIcon(new ImageIcon(new URL(currentUrl)));
+        imageLabel.setIcon(getImage(currentUrl));
 
         add(imageLabel, BorderLayout.EAST);
 
@@ -190,6 +190,7 @@ public class MapDialog extends JFrame {
     // Tarkastetaan mitk‰ karttakerrokset on valittu,
     // tehd‰‰n uudesta karttakuvasta pyyntˆ palvelimelle ja p‰ivitet‰‰n kuva
     private void updateImage() throws Exception {
+        System.gc();
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
         //Lis‰t‰‰n rajaavat koordinaatit
@@ -198,7 +199,7 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku per‰st‰
         //lis‰t‰‰n aina vakiona olevat m‰‰rittelyt
-        s += "&SRS=EPSG:4326&WIDTH=1389&HEIGHT=700&LAYERS=";
+        s += "&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=";
         // Tutkitaan, mitk‰ valintalaatikot on valittu, ja
         // ker‰t‰‰n s:‰‰n pilkulla erotettu lista valittujen kerrosten
         // nimist‰ (k‰ytet‰‰n haettaessa uutta kuvaa)
@@ -209,12 +210,16 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
-        s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        imageLabel.setIcon(new ImageIcon(new URL(s))); //VƒLIAIKAINEN, hidas kuin helvetti
-
-        // TODO:
-        //imageLabel.setIcon(getImage(s));
+        s += "&STYLES=&FORMAT=image/jpeg&TRANSPARENT=true";
+        imageLabel.setIcon(getImage(s));
     }
+    private void getCapabilities(){
+        downloader.download("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities", "capabilities.xml");
+    }
+    private ImageIcon getImage(String url){
+        downloader.download(url, "map.jpg");
+        return new ImageIcon("map.jpg");
+    };
 
     private static int[] parseBboxFromUrl(String url) {
         String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkup‰‰n
@@ -227,6 +232,4 @@ public class MapDialog extends JFrame {
         }
         return results;
     }
-
-
 } // MapDialog

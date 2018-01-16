@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class DownloadManager {
+public class DownloadManager extends Thread {
+
+    public void run(){};
 
     public static void download() throws Exception { //prompts user for info
         Scanner reader = new Scanner(System.in);
@@ -24,13 +26,13 @@ public class DownloadManager {
         }
     }
 
-    public static void download(String url, String file) throws Exception {
+    public static void download(String url, String file) {
         Path path = Paths.get(file); //file path
         URI u = URI.create(url);
         try (InputStream in = u.toURL().openStream()) { //stream from URL
             Files.deleteIfExists(path);
             Files.copy(in, path);       //copy from stream to file path
-            System.out.println("\n--***--\nDownload complete.\n--***--\n");
+            System.out.println("\n--***--\nDownload from : \n" + url + "\n complete.\n--***--\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
