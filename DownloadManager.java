@@ -7,10 +7,10 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class DownloadManager extends Thread {
-    public static boolean verbosity = false;
+    public static boolean verbosity = true;
     public void run(){};
 
-    public static void download() throws Exception { //prompts user for info
+    public void download() throws Exception { //prompts user for info
         Scanner reader = new Scanner(System.in);
         System.out.println("Input file URL : ");
         String url = reader.nextLine();
@@ -30,13 +30,13 @@ public class DownloadManager extends Thread {
     Ylikirjoittaa aiemman tiedoston tällaisen löytyessä.
     Kun verbosity == true, ilmoittaa aina mistä ladataan.
      */
-    public static boolean download(String url, String file) {
+    public boolean download(String url, String file) {
         Path path = Paths.get(file); //file path
         URI u = URI.create(url);
         try (InputStream in = u.toURL().openStream()) { //avaa stream halutusta osoitteesta
             Files.deleteIfExists(path); //poista aiempi tiedosto
             Files.copy(in, path);       //kopioi tiedosto kansioon
-            if (verbosity == true) System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
+            if (verbosity) System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
