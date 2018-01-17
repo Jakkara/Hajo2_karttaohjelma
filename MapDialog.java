@@ -10,8 +10,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.*;
-import java.util.Arrays;
 
 public class MapDialog extends JFrame {
     //default-näkymänä Eurooppa
@@ -26,7 +24,8 @@ public class MapDialog extends JFrame {
     // Käyttöliittymän komponentit
 
     private JLabel imageLabel = new JLabel();
-    private JPanel leftPanel = new JPanel();
+    private JPanel bottomPanel = new JPanel();
+    private JPanel rightPanel = new JPanel();
 
     private JButton refreshB = new JButton("Refresh");
     private JButton leftB = new JButton("<");
@@ -52,7 +51,7 @@ public class MapDialog extends JFrame {
         getContentPane().setLayout(new BorderLayout());
 
         imageLabel.setIcon(getImage(currentUrl));
-        add(imageLabel, BorderLayout.NORTH);
+        add(imageLabel, BorderLayout.WEST);
 
         ButtonListener bl = new ButtonListener();
         refreshB.addActionListener(bl);
@@ -63,9 +62,9 @@ public class MapDialog extends JFrame {
         zoomInB.addActionListener(bl);
         zoomOutB.addActionListener(bl);
 
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        leftPanel.setMaximumSize(new Dimension(100, 600));
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        bottomPanel.setMaximumSize(new Dimension(100, 600));
 
         //Käsittelee checkboxien esityksen
         Document xmlDoc = parser.getDocument("capabilities.xml");
@@ -77,20 +76,19 @@ public class MapDialog extends JFrame {
             current = parser.findNodes(layers.item(i), "Name").item(0); //haetaan layerin nimi XML:ssä
             String currentName = current.getTextContent();
             //asetetaan checkboxin rasti sillä perusteella, löytyykö se urlista
-            leftPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
+            bottomPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
         }
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.add(leftB);
+        rightPanel.add(rightB);
+        rightPanel.add(upB);
+        rightPanel.add(downB);
+        rightPanel.add(zoomInB);
+        rightPanel.add(zoomOutB);
+        add(rightPanel,BorderLayout.EAST);
 
-
-        leftPanel.add(refreshB);
-        leftPanel.add(Box.createVerticalStrut(20));
-        leftPanel.add(leftB);
-        leftPanel.add(rightB);
-        leftPanel.add(upB);
-        leftPanel.add(downB);
-        leftPanel.add(zoomInB);
-        leftPanel.add(zoomOutB);
-
-        add(leftPanel, BorderLayout.WEST);
+        bottomPanel.add(refreshB);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         pack();
         setVisible(true);
@@ -209,7 +207,7 @@ public class MapDialog extends JFrame {
         // Tutkitaan, mitkä valintalaatikot on valittu, ja
         // kerätään s:ään pilkulla erotettu lista valittujen kerrosten
         // nimistä (käytetään haettaessa uutta kuvaa)
-        Component[] components = leftPanel.getComponents();
+        Component[] components = bottomPanel.getComponents();
         for (Component com : components) {
             if (com instanceof LayerCheckBox)
                 if (((LayerCheckBox) com).isSelected()) s = s + com.getName() + ",";
