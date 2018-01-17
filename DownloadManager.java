@@ -7,24 +7,30 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class DownloadManager extends Thread {
-    public static boolean verbosity = true;
-    public void run(){};
+    private static boolean verbosity = true;
 
-    public void download() throws Exception { //prompts user for info
+    public void run() {
+    }
+
+    /*
+    Yleinen latausmetodi joka kysyy käyttäjältä syötteenä tiedot.
+     */
+    public void download() throws Exception {
         Scanner reader = new Scanner(System.in);
         System.out.println("Input file URL : ");
         String url = reader.nextLine();
         URI u = URI.create(url);
         System.out.println("Input file name.");
         Path path = Paths.get(reader.nextLine());
-        try (InputStream in = u.toURL().openStream()) { //stream from URL
-            Files.copy(in, path);       //copy from stream to file path
-            System.out.println("\n--***--\nDownload complete.\n--***--\n");
+        try (InputStream in = u.toURL().openStream()) {
+            Files.copy(in, path);
+            System.out.println("\n--***--\nLataus valmis.\n--***--\n");
         } catch (FileAlreadyExistsException faeE) {
-            System.out.println("A file with that name already exists. Enter a new name : ");
+            System.out.println("Samanniminen tiedosto on jo olemassa. Anna uusi nimi : ");
             download(url, reader.nextLine());
         }
     }
+
     /* Lataa halutusta osoitteesta tiedoston ja säilöö sen annetulla nimellä.
     Palauttaa true latauksen onnistuessa, false virheen sattuessa.
     Ylikirjoittaa aiemman tiedoston tällaisen löytyessä.

@@ -50,6 +50,7 @@ public class MapDialog extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
+        //aseta default-kuva
         imageLabel.setIcon(getImage(currentUrl));
         add(imageLabel, BorderLayout.WEST);
 
@@ -70,7 +71,7 @@ public class MapDialog extends JFrame {
         Document xmlDoc = parser.getDocument("capabilities.xml");
         //hakee Layer-yl‰otsikon
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
-        //hakee yl‰otsikon sis‰lt‰m‰t Layer-kohdatat
+        //hakee yl‰otsikon sis‰lt‰m‰t Layer-kohdat
         NodeList layers = parser.findNodes(rootLayer, "Layer");
         for (int i = 0; i < layers.getLength(); i++) {
             Node current = parser.findNodes(layers.item(i), "Title").item(0); //haetaan layerin otsikko
@@ -102,6 +103,12 @@ public class MapDialog extends JFrame {
         new MapDialog();
     }
 
+    /*
+    Liikkuminen toteutettu muuttamalla BBox-koordinaatteja URL-kyselyss‰.
+    Suuntiin liikkuminen muuttaa siihen sen akselin koordinaatteja.
+    Zoomaustoiminnot muuttavat kaikkia koordinaatteja samassa suhteessa.
+    zoomFactor hidastaa liikkumista sit‰ mukaa mit‰ l‰hemm‰s on zoomattu
+     */
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == refreshB) {
@@ -189,23 +196,32 @@ public class MapDialog extends JFrame {
     }
 
     /*
-    P‰ivitt‰‰ ohjelmassa esitetyn kuvan vastaamaan uusia koordinaatteja
+    P‰ivitt‰‰ ohjelmassa esitetyn kuvan vastaamaan uusia koordinaatteja.
+    Muodostaa uuden URL-osoitteen ja k‰skee getImage-metodia luomaan siit‰ ImageIconin.
+    Asettaa saadun Iconin uudeksi kuvaksi.
      */
     private void updateImage() throws Exception {
+        //jos pyydetty siirtym‰ ylitt‰‰ sallitut parametrit, esim liika zoomaus, keskeytet‰‰n
+        // ...p‰ivitys ja muutetaan BBox takaisin aiempaan
+        if (bbox[0] >= bbox[2] | bbox[1] >= bbox[3]) {
+            bbox = parseBboxFromUrl(currentUrl);
+            return;
+        }
+
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
 
         //Lis‰t‰‰n URLiin rajaavat koordinaatit
-        for (int aBbox : bbox) {
-            s += aBbox + ",";
+        for (int boxCoords : bbox) {
+            s += boxCoords + ",";
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku per‰st‰
 
         //lis‰t‰‰n aina vakiona olevat m‰‰rittelyt
         s += "&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=";
         // Tutkitaan, mitk‰ valintalaatikot on valittu, ja
-        // ker‰t‰‰n s:‰‰n pilkulla erotettu lista valittujen kerrosten
-        // nimist‰ (k‰ytet‰‰n haettaessa uutta kuvaa)
+        // ...ker‰t‰‰n s:‰‰n pilkulla erotettu lista valittujen kerrosten
+        // ...nimist‰ (k‰ytet‰‰n haettaessa uutta kuvaa)
         Component[] components = bottomPanel.getComponents();
         for (Component com : components) {
             if (com instanceof LayerCheckBox)
@@ -214,6 +230,7 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+        currentUrl = s;
         //uuden kuvan asetus
         imageLabel.setIcon(getImage(s));
     }
