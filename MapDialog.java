@@ -68,7 +68,9 @@ public class MapDialog extends JFrame {
 
         //Käsittelee checkboxien esityksen
         Document xmlDoc = parser.getDocument("capabilities.xml");
+        //hakee Layer-yläotsikon
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
+        //hakee yläotsikon sisältämät Layer-kohdatat
         NodeList layers = parser.findNodes(rootLayer, "Layer");
         for (int i = 0; i < layers.getLength(); i++) {
             Node current = parser.findNodes(layers.item(i), "Title").item(0); //haetaan layerin otsikko
@@ -87,7 +89,7 @@ public class MapDialog extends JFrame {
         rightPanel.add(downB);
         rightPanel.add(zoomInB);
         rightPanel.add(zoomOutB);
-        add(rightPanel,BorderLayout.EAST);
+        add(rightPanel, BorderLayout.EAST);
 
         bottomPanel.add(refreshB);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -100,8 +102,6 @@ public class MapDialog extends JFrame {
         new MapDialog();
     }
 
-    // Kontrollinappien kuuntelija
-    // KAIKKIEN NAPPIEN YHTEYDESSÄ VOINEE HYÖDYNTÄÄ updateImage()-METODIA
     private class ButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == refreshB) {
@@ -187,6 +187,7 @@ public class MapDialog extends JFrame {
             return name;
         }
     }
+
     /*
     Päivittää ohjelmassa esitetyn kuvan vastaamaan uusia koordinaatteja
      */
@@ -216,6 +217,7 @@ public class MapDialog extends JFrame {
         //uuden kuvan asetus
         imageLabel.setIcon(getImage(s));
     }
+
     /*
     Palauttaa annetusta osoitteesta luodun ImageIconin
     Oletuksena kaikki kuvat tallennetaan samannimisinä, kirjoittaen aiemman päälle
@@ -228,8 +230,10 @@ public class MapDialog extends JFrame {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }return null;
+        }
+        return null;
     }
+
     /*
     Palauttaa annetusta wms-kyselystä taulukon sen BBox-koordinaateista
      */
