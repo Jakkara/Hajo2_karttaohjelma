@@ -13,13 +13,13 @@ import java.io.File;
 
 public class MapDialog extends JFrame {
     //default-n‰kym‰n‰ Eurooppa
-    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    private static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
     //zoomFactor ohjaa kartalla liikkumisen nopeutta riippuen kuinka l‰hell‰ ollaan zoomattu
-    double zoomFactor = 1.0;
+    private double zoomFactor = 1.0;
     //bbox-taulu pit‰‰ kirjaa esitetyn kartan rajoista. alkuarvo p‰‰tell‰‰n default-kartasta
-    int[] bbox = parseBboxFromUrl(currentUrl);
+    private int[] bbox = parseBboxFromUrl(currentUrl);
     //alustetaan latausmanagerin s‰ie
-    DownloadManager downloader = new DownloadManager();
+    private DownloadManager downloader = new DownloadManager();
 
     // K‰yttˆliittym‰n komponentit
 
@@ -36,7 +36,7 @@ public class MapDialog extends JFrame {
     private JButton zoomOutB = new JButton("-");
 
 
-    public MapDialog() throws Exception {
+    private MapDialog() throws Exception {
 
         // Latausmanagerin s‰ie k‰ynnistet‰‰n
         downloader.start();
@@ -47,7 +47,7 @@ public class MapDialog extends JFrame {
 
         // Valmistele ikkuna ja lis‰‰ siihen komponentit
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
         imageLabel.setIcon(getImage(currentUrl));
@@ -78,7 +78,7 @@ public class MapDialog extends JFrame {
             current = parser.findNodes(layers.item(i), "Name").item(0); //haetaan layerin nimi XML:ss‰
             String currentName = current.getTextContent();
             //asetetaan checkboxin rasti sill‰ perusteella, lˆytyykˆ se urlista
-            bottomPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
+            bottomPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.contains(currentName)));
         }
 
         //lis‰t‰‰n oikealle liikkumispainikkeet
@@ -178,7 +178,7 @@ public class MapDialog extends JFrame {
     private class LayerCheckBox extends JCheckBox {
         private String name = "";
 
-        public LayerCheckBox(String name, String title, boolean selected) {
+        LayerCheckBox(String name, String title, boolean selected) {
             super(title, null, selected);
             this.name = name;
         }
@@ -196,8 +196,8 @@ public class MapDialog extends JFrame {
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
 
         //Lis‰t‰‰n URLiin rajaavat koordinaatit
-        for (int i = 0; i < bbox.length; i++) {
-            s += bbox[i] + ",";
+        for (int aBbox : bbox) {
+            s += aBbox + ",";
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku per‰st‰
 
