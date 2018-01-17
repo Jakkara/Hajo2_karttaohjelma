@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class DownloadManager extends Thread {
-    public static boolean verbosity = true;
+    public static boolean verbosity = false;
     public void run(){};
 
     public static void download() throws Exception { //prompts user for info
@@ -25,17 +25,22 @@ public class DownloadManager extends Thread {
             download(url, reader.nextLine());
         }
     }
-
+    /* Lataa halutusta osoitteesta tiedoston ja säilöö sen annetulla nimellä.
+    Palauttaa true latauksen onnistuessa, false virheen sattuessa.
+    Ylikirjoittaa aiemman tiedoston tällaisen löytyessä.
+    Kun verbosity == true, ilmoittaa aina mistä ladataan.
+     */
     public static boolean download(String url, String file) {
         Path path = Paths.get(file); //file path
         URI u = URI.create(url);
-        try (InputStream in = u.toURL().openStream()) { //stream from URL
-            Files.deleteIfExists(path);
-            Files.copy(in, path);       //copy from stream to file path
+        try (InputStream in = u.toURL().openStream()) { //avaa stream halutusta osoitteesta
+            Files.deleteIfExists(path); //poista aiempi tiedosto
+            Files.copy(in, path);       //kopioi tiedosto kansioon
             if (verbosity == true) System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-        }return false;
+            return false;
+        }
     }
 }

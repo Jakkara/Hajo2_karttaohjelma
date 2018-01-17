@@ -14,10 +14,14 @@ import java.net.*;
 import java.util.Arrays;
 
 public class MapDialog extends JFrame {
-
-    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1000&HEIGHT=500&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    //default-n‰kym‰n‰ Eurooppa
+    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    //zoomFactor ohjaa kartalla liikkumisen nopeutta riippuen kuinka l‰hell‰ ollaan zoomattu
     double zoomFactor = 1.0;
+    //bbox-taulu pit‰‰ kirjaa esitetyn kartan rajoista. alkuarvo p‰‰tell‰‰n default-kartasta
     int[] bbox = parseBboxFromUrl(currentUrl);
+    //alustetaan latausmanagerin s‰ie
+    DownloadManager downloader = new DownloadManager();
 
     // K‰yttˆliittym‰n komponentit
 
@@ -31,11 +35,11 @@ public class MapDialog extends JFrame {
     private JButton downB = new JButton("v");
     private JButton zoomInB = new JButton("+");
     private JButton zoomOutB = new JButton("-");
-    DownloadManager downloader = new DownloadManager();
+
 
     public MapDialog() throws Exception {
 
-        // Latausmanageri
+        // Latausmanagerin s‰ie k‰ynnistet‰‰n
         downloader.start();
         // XML-k‰‰nt‰j‰
         XmlParser parser = new XmlParser();
@@ -47,11 +51,8 @@ public class MapDialog extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        downloader.download(currentUrl, "map.png");
-
-        imageLabel.setIcon(new ImageIcon(new URL(currentUrl)));
-
-        add(imageLabel, BorderLayout.EAST);
+        imageLabel.setIcon(getImage(currentUrl));
+        add(imageLabel, BorderLayout.NORTH);
 
         ButtonListener bl = new ButtonListener();
         refreshB.addActionListener(bl);
@@ -62,13 +63,12 @@ public class MapDialog extends JFrame {
         zoomInB.addActionListener(bl);
         zoomOutB.addActionListener(bl);
 
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.X_AXIS));
         leftPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         leftPanel.setMaximumSize(new Dimension(100, 600));
 
         //K‰sittelee checkboxien esityksen
         Document xmlDoc = parser.getDocument("capabilities.xml");
-        System.out.println("File found : " + xmlDoc.getDocumentElement().getNodeName());
         Node rootLayer = xmlDoc.getElementsByTagName("Layer").item(0);
         NodeList layers = parser.findNodes(rootLayer, "Layer");
         for (int i = 0; i < layers.getLength(); i++) {
@@ -205,7 +205,7 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku per‰st‰
         //lis‰t‰‰n aina vakiona olevat m‰‰rittelyt
-        s += "&SRS=EPSG:4326&WIDTH=1000&HEIGHT=500&LAYERS=";
+        s += "&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=";
         // Tutkitaan, mitk‰ valintalaatikot on valittu, ja
         // ker‰t‰‰n s:‰‰n pilkulla erotettu lista valittujen kerrosten
         // nimist‰ (k‰ytet‰‰n haettaessa uutta kuvaa)
