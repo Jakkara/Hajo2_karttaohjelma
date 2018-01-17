@@ -4,15 +4,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.*;
 import java.util.Arrays;
 
 public class MapDialog extends JFrame {
 
-    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+    static String currentUrl = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=-60,0,100,80&SRS=EPSG:4326&WIDTH=1000&HEIGHT=500&LAYERS=bluemarble,country_bounds&STYLES=&FORMAT=image/png&TRANSPARENT=true";
     double zoomFactor = 1.0;
     int[] bbox = parseBboxFromUrl(currentUrl);
 
@@ -204,7 +207,7 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku per‰st‰
         //lis‰t‰‰n aina vakiona olevat m‰‰rittelyt
-        s += "&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=";
+        s += "&SRS=EPSG:4326&WIDTH=1000&HEIGHT=500&LAYERS=";
         // Tutkitaan, mitk‰ valintalaatikot on valittu, ja
         // ker‰t‰‰n s:‰‰n pilkulla erotettu lista valittujen kerrosten
         // nimist‰ (k‰ytet‰‰n haettaessa uutta kuvaa)
@@ -216,8 +219,11 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        downloader.download(s, "map.png");
-        imageLabel.setIcon(new ImageIcon("map.png")); //VƒLIAIKAINEN, hidas kuin helvetti
+        if (downloader.download(s, "map.png") == true) {
+            BufferedImage img= ImageIO.read(new File("map.png"));
+            ImageIcon icon = new ImageIcon(img);
+            imageLabel.setIcon(icon);
+        }
     }
 
     private static int[] parseBboxFromUrl(String url) {

@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class DownloadManager extends Thread {
-
+    public static boolean verbosity = true;
     public void run(){};
 
     public static void download() throws Exception { //prompts user for info
@@ -26,15 +26,16 @@ public class DownloadManager extends Thread {
         }
     }
 
-    public static void download(String url, String file) {
+    public static boolean download(String url, String file) {
         Path path = Paths.get(file); //file path
         URI u = URI.create(url);
         try (InputStream in = u.toURL().openStream()) { //stream from URL
             Files.deleteIfExists(path);
             Files.copy(in, path);       //copy from stream to file path
-            System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
+            if (verbosity == true) System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }return false;
     }
 }
