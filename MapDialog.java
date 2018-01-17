@@ -78,6 +78,8 @@ public class MapDialog extends JFrame {
             //asetetaan checkboxin rasti sillä perusteella, löytyykö se urlista
             bottomPanel.add(new LayerCheckBox(currentName, currentTitle, currentUrl.indexOf(currentName) != -1));
         }
+
+        //lisätään oikealle liikkumispainikkeet
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.add(leftB);
         rightPanel.add(rightB);
@@ -92,7 +94,6 @@ public class MapDialog extends JFrame {
 
         pack();
         setVisible(true);
-
     }
 
     public static void main(String[] args) throws Exception {
@@ -111,7 +112,6 @@ public class MapDialog extends JFrame {
                 }
             }
             if (e.getSource() == leftB) {
-                // TODO:
                 bbox[0] -= 20 / zoomFactor;
                 bbox[2] -= 20 / zoomFactor;
                 try {
@@ -130,7 +130,6 @@ public class MapDialog extends JFrame {
                 }
             }
             if (e.getSource() == upB) {
-                // TODO:
                 bbox[1] += 10 / zoomFactor;
                 bbox[3] += 10 / zoomFactor;
                 try {
@@ -140,7 +139,6 @@ public class MapDialog extends JFrame {
                 }
             }
             if (e.getSource() == downB) {
-                // TODO: tarkista sallittu liikkuminen
                 bbox[1] -= 10 / zoomFactor;
                 bbox[3] -= 10 / zoomFactor;
                 try {
@@ -150,7 +148,6 @@ public class MapDialog extends JFrame {
                 }
             }
             if (e.getSource() == zoomInB) {
-                // TODO: tarkista sallittu liikkuminen
                 bbox[0] += 10;
                 bbox[2] -= 10;
                 bbox[1] += 5;
@@ -190,18 +187,19 @@ public class MapDialog extends JFrame {
             return name;
         }
     }
-
-    // Tarkastetaan mitkä karttakerrokset on valittu,
-    // tehdään uudesta karttakuvasta pyyntö palvelimelle ja päivitetään kuva
+    /*
+    Päivittää ohjelmassa esitetyn kuvan vastaamaan uusia koordinaatteja
+     */
     private void updateImage() throws Exception {
-        System.gc();
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
-        //Lisätään rajaavat koordinaatit
+
+        //Lisätään URLiin rajaavat koordinaatit
         for (int i = 0; i < bbox.length; i++) {
             s += bbox[i] + ",";
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1); //poistetaan pilkku perästä
+
         //lisätään aina vakiona olevat määrittelyt
         s += "&SRS=EPSG:4326&WIDTH=1200&HEIGHT=600&LAYERS=";
         // Tutkitaan, mitkä valintalaatikot on valittu, ja
@@ -215,21 +213,26 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+        //uuden kuvan asetus
         imageLabel.setIcon(getImage(s));
     }
-
-    public ImageIcon getImage(String url) {
-        if (downloader.download(url, "map.png") == true) {
+    /*
+    Palauttaa annetusta osoitteesta luodun ImageIconin
+    Oletuksena kaikki kuvat tallennetaan samannimisinä, kirjoittaen aiemman päälle
+     */
+    private ImageIcon getImage(String url) {
+        if (downloader.download(url, "map.png")) {
             try {
                 BufferedImage img = ImageIO.read(new File("map.png"));
-                ImageIcon icon = new ImageIcon(img);
-                return icon;
+                return new ImageIcon(img);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }return null;
     }
-
+    /*
+    Palauttaa annetusta wms-kyselystä taulukon sen BBox-koordinaateista
+     */
     private static int[] parseBboxFromUrl(String url) {
         String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkupään
         parsed = parsed.substring(0, parsed.indexOf('&')); //leikkaa koordinaattien jälkeisen osan

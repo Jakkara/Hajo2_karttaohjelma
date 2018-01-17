@@ -25,10 +25,10 @@ public class DownloadManager extends Thread {
             download(url, reader.nextLine());
         }
     }
-    /* Lataa halutusta osoitteesta tiedoston ja sÃ¤ilÃ¶Ã¶ sen annetulla nimellÃ¤.
+    /* Lataa halutusta osoitteesta tiedoston ja säilöö sen annetulla nimellä.
     Palauttaa true latauksen onnistuessa, false virheen sattuessa.
-    Ylikirjoittaa aiemman tiedoston tÃ¤llaisen lÃ¶ytyessÃ¤.
-    Kun verbosity == true, ilmoittaa aina mistÃ¤ ladataan.
+    Ylikirjoittaa aiemman tiedoston tällaisen löytyessä.
+    Kun verbosity == true, ilmoittaa aina mistä ladataan.
      */
     public static boolean download(String url, String file) {
         Path path = Paths.get(file); //file path
