@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 
 public class MapDialog extends JFrame {
@@ -30,20 +28,25 @@ public class MapDialog extends JFrame {
     private JButton downB = new JButton("v");
     private JButton zoomInB = new JButton("+");
     private JButton zoomOutB = new JButton("-");
-    DownloadManager downloader = new DownloadManager();
 
     public MapDialog() throws Exception {
+
         // Latausmanageri
+        DownloadManager downloader = new DownloadManager();
+        downloader.start();
         // XML-k‰‰nt‰j‰
         XmlParser parser = new XmlParser();
-        downloader.start();
-        getCapabilities();
+        // getCapabilities-kysely -> capabilities.xml
+        downloader.download("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities", "capabilities.xml");
+
         // Valmistele ikkuna ja lis‰‰ siihen komponentit
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
 
-        imageLabel.setIcon(getImage(currentUrl));
+        downloader.download(currentUrl, "map.png");
+
+        imageLabel.setIcon(new ImageIcon(new URL(currentUrl)));
 
         add(imageLabel, BorderLayout.EAST);
 
@@ -191,6 +194,8 @@ public class MapDialog extends JFrame {
     // tehd‰‰n uudesta karttakuvasta pyyntˆ palvelimelle ja p‰ivitet‰‰n kuva
     private void updateImage() throws Exception {
         System.gc();
+        DownloadManager downloader = new DownloadManager();
+        downloader.start();
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
         //Lis‰t‰‰n rajaavat koordinaatit
@@ -210,16 +215,10 @@ public class MapDialog extends JFrame {
         }
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
-        s += "&STYLES=&FORMAT=image/jpeg&TRANSPARENT=true";
-        imageLabel.setIcon(getImage(s));
+        s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
+        downloader.download(s, "map.png");
+        imageLabel.setIcon(new ImageIcon("map.png")); //VƒLIAIKAINEN, hidas kuin helvetti
     }
-    private void getCapabilities(){
-        downloader.download("http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetCapabilities", "capabilities.xml");
-    }
-    private ImageIcon getImage(String url){
-        downloader.download(url, "map.jpg");
-        return new ImageIcon("map.jpg");
-    };
 
     private static int[] parseBboxFromUrl(String url) {
         String parsed = url.substring(url.indexOf("BBOX=") + 5);//leikkaa urlin alkup‰‰n

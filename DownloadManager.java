@@ -32,7 +32,7 @@ public class DownloadManager extends Thread {
         try (InputStream in = u.toURL().openStream()) { //stream from URL
             Files.deleteIfExists(path);
             Files.copy(in, path);       //copy from stream to file path
-            System.out.println("\n--***--\nDownload from : \n" + url + "\n complete.\n--***--\n");
+            System.out.println("\n--***--\nDownload " + url + " complete.\n--***--\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
