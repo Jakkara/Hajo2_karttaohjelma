@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class DownloadManager extends Thread {
-    private static boolean verbosity = true;
+    private static boolean verbosity = false;
 
     public void run() {
     }
