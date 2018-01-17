@@ -31,11 +31,11 @@ public class MapDialog extends JFrame {
     private JButton downB = new JButton("v");
     private JButton zoomInB = new JButton("+");
     private JButton zoomOutB = new JButton("-");
+    DownloadManager downloader = new DownloadManager();
 
     public MapDialog() throws Exception {
 
         // Latausmanageri
-        DownloadManager downloader = new DownloadManager();
         downloader.start();
         // XML-k‰‰nt‰j‰
         XmlParser parser = new XmlParser();
@@ -197,8 +197,6 @@ public class MapDialog extends JFrame {
     // tehd‰‰n uudesta karttakuvasta pyyntˆ palvelimelle ja p‰ivitet‰‰n kuva
     private void updateImage() throws Exception {
         System.gc();
-        DownloadManager downloader = new DownloadManager();
-        downloader.start();
         //URL-osoitteen alku aina sama
         String s = "http://demo.mapserver.org/cgi-bin/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&BBOX=";
         //Lis‰t‰‰n rajaavat koordinaatit
@@ -219,11 +217,19 @@ public class MapDialog extends JFrame {
         if (s.endsWith(",")) s = s.substring(0, s.length() - 1);
         //loppuosa aina vakio
         s += "&STYLES=&FORMAT=image/png&TRANSPARENT=true";
-        if (downloader.download(s, "map.png") == true) {
-            BufferedImage img= ImageIO.read(new File("map.png"));
-            ImageIcon icon = new ImageIcon(img);
-            imageLabel.setIcon(icon);
-        }
+        imageLabel.setIcon(getImage(s));
+    }
+
+    public ImageIcon getImage(String url) {
+        if (downloader.download(url, "map.png") == true) {
+            try {
+                BufferedImage img = ImageIO.read(new File("map.png"));
+                ImageIcon icon = new ImageIcon(img);
+                return icon;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }return null;
     }
 
     private static int[] parseBboxFromUrl(String url) {
